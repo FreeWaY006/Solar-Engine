@@ -1,0 +1,88 @@
+{
+    "modules": {
+        "metadata": {
+            "removeServerIntegration": true,
+            "removePinnedServers": true,
+            "removeModSettings": true,
+            "removeClientSettings": true,
+            "removeBlogPosts": false,
+            "isEnabled": true
+        },
+        "discordRichPresence": {
+            "clientID": "920998351430901790",
+            "icon": "logo",
+            "iconText": "Solar Tweaks",
+            "afkText": "AFK",
+            "menuText": "In Menu",
+            "singlePlayerText": "Playing Singleplayer",
+            "displayActivity": true,
+            "showServerIP": true,
+            "showIcon": true,
+            "isEnabled": false
+        },
+        "privacy": {
+            "isEnabled": false
+        },
+        "removeFakeLevelHead": {
+            "isEnabled": false
+        },
+        "capeSystem": {
+            "serverURL": "http://s.optifine.net",
+            "isEnabled": false
+        },
+        "changeModStrings": {
+            "nickhiderText": "You",
+            "fpsText": "FPS",
+            "cpsText": "CPS",
+            "autoGGCommand": "/ac gg",
+            "levelHeadText": "Level",
+            "reachText": "blocks",
+            "isEnabled": false
+        },
+        "windowTitle": {
+            "title": "Solar Tweaks",
+            "showVersion": true,
+            "isEnabled": true
+        },
+        "websocketURL": {
+            "url": "wss://assetserver.lunarclientprod.com/connect",
+            "isEnabled": false
+        },
+        "lunarOverlays": {
+            "isEnabled": false
+        },
+        "clothCapes": {
+            "isEnabled": false
+        },
+        "hurtCamShake": {
+            "multiplier": 0.3,
+            "isEnabled": false
+        },
+        "removeMousePopup": {
+            "isEnabled": false
+        },
+        "removeProfilesCap": {
+            "isEnabled": false
+        },
+        "toggleSprintText": {
+            "flyingText": "Flying",
+            "flyingBoostText": "Boost",
+            "ridingText": "Riding",
+            "descendingText": "Descending",
+            "dismountingText": "Dismounting",
+            "sneakingText": "Sneaking",
+            "toggledText": "Toggled",
+            "sprintingText": "Sprinting",
+            "isEnabled": false
+        },
+        "allowCrackedAccounts": {
+            "crackedUsername": "Steve",
+            "isEnabled": false
+        }
+    },
+    "customCommands": {
+        "commands": {
+        }
+    },
+    "debugPackets": false
+}
