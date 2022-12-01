@@ -9,15 +9,32 @@ import org.objectweb.asm.Type
 import java.net.URI
 
 fun initTweaks() {
+    findLunarClass {
+        strings has "[1466 FPS]"
+        methods {
+            "getText" {
+                val defaultFPSText = "\u0001 FPS"
+                strings has defaultFPSText
+
+                transform {
+                    withModule<ChangeModStrings> { replaceConstant(defaultFPSText, "\u0001 $fpsText") }
+                    withModule<FPSSpoof> {
+                        callAdvice(matcher = { it.name == "bridge\$getDebugFPS" }, afterCall = {
+                            visitInsn(I2F)
+                            loadConstant(multiplier)
+                            visitInsn(FMUL)
+                            visitInsn(F2I)
+                        })
+                    }
+                }
+            }
+        }
+    }
+
     withModule<ChangeModStrings> {
         findLunarClass {
             strings has "lastKnownHypixelNick"
             constantReplacement("You", nickhiderText)
-        }
-
-        findLunarClass {
-            strings has "[1466 FPS]"
-            constantReplacement("\u0001 FPS", "\u0001 $fpsText")
         }
 
         findLunarClass {

@@ -122,17 +122,6 @@ val playerConfigReceiver = finders.optifineClass("PlayerConfigurationReceiver") 
     methods {
         "construct" { method.isConstructor() }
         namedTransform("fileDownloadFinished") {
-            methodEnter {
-                load<Throwable>(3)
-                val label = Label()
-                visitJumpInsn(IFNULL, label)
-
-                load<Throwable>(3)
-                invokeMethod(Throwable::class.java.getMethod("printStackTrace"))
-
-                visitLabel(label)
-            }
-
             replaceCall(
                 matcher = { it.name == "dbg" },
                 replacement = { pop() }

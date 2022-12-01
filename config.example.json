@@ -78,6 +78,10 @@
         "allowCrackedAccounts": {
             "crackedUsername": "Steve",
             "isEnabled": false
+        },
+        "fpsSpoof": {
+            "multiplier": 1.0,
+            "isEnabled": false
         }
     },
     "customCommands": {

@@ -62,7 +62,7 @@
             "options": {
             },
             "displayName": "Cloth Cloaks",
-            "description": "Changes the cloaks aesthetics by rendering all Lunar cloaks with a cloth texture (can slow down your client)"
+            "description": "Replaces all Lunar cloaks with a cloth cloak texture (might slow down your game)"
         },
         "discordRichPresence": {
             "options": {
@@ -115,6 +115,17 @@
             "displayName": "Discord Rich Presence",
             "description": "Allows you to change the look-and-feel of the Discord Rich Presence"
         },
+        "fpsSpoof": {
+            "options": {
+                "multiplier": {
+                    "type": "FLOAT",
+                    "displayName": "Multiplier",
+                    "description": "Specifies the number to multiply the fps value with"
+                }
+            },
+            "displayName": "FPS Spoof",
+            "description": "Allows you to increase the number your FPS counter says by multiplying by a constant"
+        },
         "hurtCamShake": {
             "options": {
                 "multiplier": {
@@ -141,12 +152,12 @@
                 },
                 "removeClientSettings": {
                     "type": "BOOLEAN",
-                    "displayName": "Remove Client Settings",
+                    "displayName": "Remove Forced Client Settings",
                     "description": "Similar as Remove Mod Settings, except more general. Usually has no effect (but it might in the future)"
                 },
                 "removeModSettings": {
                     "type": "BOOLEAN",
-                    "displayName": "Remove Mod Settings",
+                    "displayName": "Remove Forced Mod Settings",
                     "description": "Prevents Lunar Client from forcing mod settings"
                 },
                 "removePinnedServers": {
@@ -156,7 +167,7 @@
                 },
                 "removeServerIntegration": {
                     "type": "BOOLEAN",
-                    "displayName": "Remove Server Integration",
+                    "displayName": "Remove Mod Bans (Freelook)",
                     "description": "Prevents Lunar from setting mod settings based on the server you are on (for example, this removes the Freelook ban)"
                 }
             },
@@ -241,8 +252,8 @@
                     "description": "Paste the websocket URL you want to use here"
                 }
             },
-            "displayName": "Assets Socket",
-            "description": "Allows you to modify the URL that the client uses to fetch resources"
+            "displayName": "Websocket",
+            "description": "Allows you to modify the websocket URL that the client uses to fetch resources"
         },
         "windowTitle": {
             "options": {

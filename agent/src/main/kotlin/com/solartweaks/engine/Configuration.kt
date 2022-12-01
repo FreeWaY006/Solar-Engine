@@ -63,7 +63,8 @@ data class Modules(
     val removeMousePopup: RemoveMousePopup = RemoveMousePopup(),
     val removeProfilesCap: RemoveProfilesCap = RemoveProfilesCap(),
     val toggleSprintText: ToggleSprintText = ToggleSprintText(),
-    val allowCrackedAccounts: AllowCrackedAccounts = AllowCrackedAccounts()
+    val allowCrackedAccounts: AllowCrackedAccounts = AllowCrackedAccounts(),
+    val fpsSpoof: FPSSpoof = FPSSpoof()
 ) {
     val modules
         get() = serializedPropertiesOf<Modules>()
@@ -87,7 +88,7 @@ sealed interface Module {
 @ModuleInfo("Metadata", "Allows you to remove certain unwanted features from Lunar Client")
 data class Metadata(
     @OptionInfo(
-        "Remove Server Integration",
+        "Remove Mod Bans (Freelook)",
         "Prevents Lunar from setting mod settings based on the server you are on " +
                 "(for example, this removes the Freelook ban)"
     )
@@ -100,13 +101,13 @@ data class Metadata(
     val removePinnedServers: Boolean = true,
 
     @OptionInfo(
-        "Remove Mod Settings",
+        "Remove Forced Mod Settings",
         "Prevents Lunar Client from forcing mod settings"
     )
     val removeModSettings: Boolean = true,
 
     @OptionInfo(
-        "Remove Client Settings",
+        "Remove Forced Client Settings",
         "Similar as Remove Mod Settings, except more general. Usually has no effect (but it might in the future)"
     )
     val removeClientSettings: Boolean = true,
@@ -226,8 +227,8 @@ data class ChangeModStrings(
 
 @Serializable
 @ModuleInfo(
-    "Assets Socket",
-    "Allows you to modify the URL that the client uses to fetch resources"
+    "Websocket",
+    "Allows you to modify the websocket URL that the client uses to fetch resources"
 )
 data class WebsocketURL(
     @OptionInfo("URL", "Paste the websocket URL you want to use here")
@@ -258,7 +259,7 @@ data class LunarOverlays(override val isEnabled: Boolean = false) : Module
 @Serializable
 @ModuleInfo(
     "Cloth Cloaks",
-    "Changes the cloaks aesthetics by rendering all Lunar cloaks with a cloth texture (can slow down your client)"
+    "Replaces all Lunar cloaks with a cloth cloak texture (might slow down your game)"
 )
 data class ClothCapes(override val isEnabled: Boolean = false) : Module
 
@@ -332,6 +333,20 @@ data class ToggleSprintText(
 data class AllowCrackedAccounts(
     @OptionInfo("Cracked Username", "Set this field to the username you want")
     val crackedUsername: String = "Steve",
+    override val isEnabled: Boolean = false
+) : Module
+
+@Serializable
+@ModuleInfo(
+    "FPS Spoof",
+    "Allows you to increase the number your FPS counter says by multiplying by a constant"
+)
+data class FPSSpoof(
+    @OptionInfo(
+        "Multiplier",
+        "Specifies the number to multiply the fps value with"
+    )
+    val multiplier: Float = 1.0f,
     override val isEnabled: Boolean = false
 ) : Module
 
