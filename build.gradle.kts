@@ -14,6 +14,6 @@ allprojects {
 
 tasks {
     register("release") {
-        dependsOn(":agent:updaterConfig", ":agent:generateConfigurations")
+        dependsOn(":agent:updaterConfig", ":agent:generateConfigurations", ":agent:generateFeatures")
     }
 }

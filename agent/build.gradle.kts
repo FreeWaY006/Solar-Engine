@@ -48,10 +48,15 @@ tasks {
         }
     }
 
-    register<JavaExec>("generateConfigurations") {
-        dependsOn("jar")
-        classpath(jar.get().outputs.files.singleFile.absolutePath)
-        workingDir = rootDir
-        mainClass.set("com.solartweaks.engine.GenerateConfigurations")
+    fun javaRunTask(name: String, mainName: String) {
+        register<JavaExec>(name) {
+            dependsOn("jar")
+            classpath(jar.get().outputs.files.singleFile.absolutePath)
+            workingDir = rootDir
+            mainClass.set("com.solartweaks.engine.$mainName")
+        }
     }
+
+    javaRunTask("generateConfigurations", "GenerateConfigurations")
+    javaRunTask("generateFeatures", "GenerateFeatures")
 }
