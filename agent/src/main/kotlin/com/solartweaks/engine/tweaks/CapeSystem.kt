@@ -3,11 +3,13 @@ package com.solartweaks.engine.tweaks
 import com.solartweaks.engine.*
 import com.solartweaks.engine.util.*
 import org.objectweb.asm.Label
-import org.objectweb.asm.Opcodes.ARETURN
-import org.objectweb.asm.Opcodes.IFNULL
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.Type
 
 fun shouldImplementItems() = minecraftVersion.id in listOf("v1_8", "v1_7", "v1_12")
+val shouldImplementItemsCached by lazy { shouldImplementItems() }
+
 fun initCapeSystemTweaks() {
     withModule<CapeSystem> {
         finders.optifineClass("HttpUtils") {
@@ -19,7 +21,7 @@ fun initCapeSystemTweaks() {
         finders.optifineClass("PlayerConfigurations") {
             methods {
                 namedTransform("getPlayerConfiguration") {
-                    overwrite {
+                    whenImplementItems {
                         getObject<ConfigRegistry>()
                         load<Any>(0)
                         getPlayerName()
@@ -30,7 +32,7 @@ fun initCapeSystemTweaks() {
                 }
 
                 namedTransform("setPlayerConfiguration") {
-                    overwrite {
+                    whenImplementItems {
                         getObject<ConfigRegistry>()
                         load<Any>(0)
                         load<Any>(1)
@@ -49,20 +51,26 @@ fun initCapeSystemTweaks() {
 
         finders.optifineClass("PlayerItemsLayer") {
             methods {
-                namedTransform("renderEquippedItems") {
-                    overwrite {
-                        val field = owner.fieldData.first()
-                        loadThis()
-                        getField(field)
-                        cast(renderPlayer().type)
-                        invokeMethod(playerGetMainModel())
-                        load<Any>(1)
-                        dup()
-                        getPlayerName()
-                        load<Float>(2)
-                        load<Float>(3)
-                        invokeMethod(::renderItems)
-                        returnMethod()
+                named("renderEquippedItems") {
+                    arguments[1] = Type.FLOAT_TYPE
+                    arguments[2] = Type.FLOAT_TYPE
+                    arguments count 3
+
+                    transform {
+                        whenImplementItems {
+                            val field = owner.fieldData.first()
+                            loadThis()
+                            getField(field)
+                            cast(renderPlayer().type)
+                            invokeMethod(playerGetMainModel())
+                            load<Any>(1)
+                            dup()
+                            getPlayerName()
+                            load<Float>(2)
+                            load<Float>(3)
+                            invokeMethod(::renderItems)
+                            returnMethod()
+                        }
                     }
                 }
             }
@@ -70,10 +78,18 @@ fun initCapeSystemTweaks() {
     }
 }
 
+fun MethodTransformContext.whenImplementItems(impl: MethodVisitor.() -> Unit) = methodEnter {
+    val label = Label()
+    getProperty(::shouldImplementItemsCached)
+    visitJumpInsn(IFEQ, label)
+    impl()
+    visitLabel(label)
+}
+
 val playerConfiguration = finders.optifineClass("PlayerConfiguration") {
     methods {
-        "construct" { method.isConstructor() }
         named("renderPlayerItems")
+        "construct" { method.isConstructor() }
     }
 
     fields {
@@ -84,7 +100,7 @@ val playerConfiguration = finders.optifineClass("PlayerConfiguration") {
 }
 
 val playerConfigAccess by accessor<_, PlayerConfiguration.Static>(playerConfiguration) {
-    preloadOptifineClass("PlayerConfiguration", "player")
+    loadOptifineClass("PlayerConfiguration", "player")
 }
 
 interface PlayerConfiguration : InstanceAccessor {
@@ -105,7 +121,7 @@ val fileDownloadThread = finders.optifineClass("FileDownloadThread") {
 }
 
 val fdtAccess by accessor<_, FileDownloadThread.Static>(fileDownloadThread) {
-    preloadOptifineClass("FileDownloadThread", "http")
+    loadOptifineClass("FileDownloadThread", "http")
 }
 
 interface FileDownloadThread : InstanceAccessor {
@@ -131,7 +147,7 @@ val playerConfigReceiver = finders.optifineClass("PlayerConfigurationReceiver") 
 }
 
 val playerConfigRecvAccess by accessor<_, PlayerConfigurationReceiver.Static>(playerConfigReceiver) {
-    preloadOptifineClass("PlayerConfigurationReceiver", "player")
+    loadOptifineClass("PlayerConfigurationReceiver", "player")
 }
 
 interface PlayerConfigurationReceiver : InstanceAccessor {
@@ -148,25 +164,21 @@ object ConfigRegistry {
     private val configs = mutableMapOf<String, PlayerConfiguration>()
     val cosmeticsServer = getModule<CapeSystem>().serverURL.replace("https://", "http://")
 
-    fun getConfig(player: String): PlayerConfiguration? {
-        if (!shouldImplementItems()) return null
-
-        return configs.getOrPut(player) {
-            runCatching {
-                FileDownloadThread.construct(
-                    path = "$cosmeticsServer/users/$player.cfg",
-                    listener = PlayerConfigurationReceiver.construct(player).delegate
-                ).start()
-            }.onFailure {
-                println("Failed to download config for $player")
-                it.printStackTrace()
-            }
-
-            PlayerConfiguration.construct()
+    fun getConfig(player: String) = configs.getOrPut(player) {
+        runCatching {
+            FileDownloadThread.construct(
+                path = "$cosmeticsServer/users/$player.cfg",
+                listener = PlayerConfigurationReceiver.construct(player).delegate
+            ).start()
+        }.onFailure {
+            println("Failed to download config for $player")
+            it.printStackTrace()
         }
+
+        PlayerConfiguration.construct()
     }
 
-    fun getRawConfig(player: String) = getConfig(player)?.delegate
+    fun getRawConfig(player: String) = getConfig(player).delegate
     fun setConfig(player: String, config: Any?) {
         if (config != null) {
             configs[player] = PlayerConfiguration.cast(config)
@@ -184,10 +196,7 @@ fun renderItems(model: Any?, player: Any?, playerName: String, x: Float, y: Floa
         disableRescaleNormal()
         enableCull()
 
-        runCatching {
-            ConfigRegistry.getConfig(playerName)?.renderPlayerItems(model, player, x, y)
-                ?: println("Couldn't find config for $playerName")
-        }.onFailure {
+        runCatching { ConfigRegistry.getConfig(playerName).renderPlayerItems(model, player, x, y) }.onFailure {
             println("Failed to render config for player")
             it.printStackTrace()
         }

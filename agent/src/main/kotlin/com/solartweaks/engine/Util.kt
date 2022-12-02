@@ -2,6 +2,7 @@ package com.solartweaks.engine
 
 import com.solartweaks.engine.util.*
 import java.lang.invoke.MethodType
+import java.lang.reflect.Method
 
 fun MethodsContext.named(name: String, block: MethodContext.() -> Unit = {}) = name {
     method named name
@@ -22,14 +23,15 @@ fun optifineClassName(name: String, subpackage: String) = when (BridgeManager.mi
     else -> "$optifinePackage$subpackage/"
 } + name
 
-fun preloadOptifineClass(name: String, subpackage: String) {
+fun loadOptifineClass(name: String, subpackage: String) =
     mainLoader.loadClass(optifineClassName(name, subpackage).replace('/', '.'))
-}
 
 private fun ClassLoader.loadInternal(name: String) = loadClass(name.replace('/', '.'))
 
-fun MethodData.tryInvoke(receiver: Any? = null, vararg params: Any?, loader: ClassLoader = mainLoader) =
-    loader.loadInternal(owner.name).getDeclaredMethod(
-        method.name,
-        *MethodType.fromMethodDescriptorString(method.desc, loader).parameterArray()
-    ).also { it.isAccessible = true }(receiver, *params)
+fun MethodData.asMethod(loader: ClassLoader = mainLoader) = loader.loadInternal(owner.name).getDeclaredMethod(
+    method.name,
+    *MethodType.fromMethodDescriptorString(method.desc, loader).parameterArray()
+).also { it.isAccessible = true }
+
+fun MethodData.tryInvoke(receiver: Any? = null, vararg params: Any?, method: Method = asMethod()) =
+    method(receiver, *params)

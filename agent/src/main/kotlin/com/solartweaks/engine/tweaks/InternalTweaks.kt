@@ -77,7 +77,7 @@ fun handlePacket(packet: Any?) {
     }
 }
 
-fun modName() = "solartweaksv$version-lunar${minecraftVersion.id}"
+fun modName() = runCatching { "solartweaksv$version-lunar${minecraftVersion.id}" }.getOrElse { "solartweaksv$version" }
 
 fun sendLaunch() {
     runCatching {

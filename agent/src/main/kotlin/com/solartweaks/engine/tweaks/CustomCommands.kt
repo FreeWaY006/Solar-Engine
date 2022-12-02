@@ -116,9 +116,9 @@ val builtinCommands = mapOf(
                 },
                 {
                     "text": "${
-                    if (isModuleEnabled<CapeSystem>()) {
-                        ConfigRegistry.getConfig(client.player.name)?.playerItemModels?.size ?: 0
-                    } else "Not enabled"
+                    if (isModuleEnabled<CapeSystem>() && shouldImplementItemsCached) {
+                        ConfigRegistry.getConfig(client.player.name).playerItemModels.size
+                    } else "Not enabled/overridden/1.16+"
                 }\n"
                 }
             ]
