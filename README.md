@@ -1,6 +1,6 @@
 # Solar Engine
 ![GitHub](https://img.shields.io/github/license/Solar-Tweaks/Solar-Engine?style=for-the-badge)
-![Maintenance](https://img.shields.io/maintenance/yes/2022?style=for-the-badge)
+![Maintenance](https://img.shields.io/maintenance/yes/2023?style=for-the-badge)
 
 Engine designed to modify Lunar Client on runtime, easier and faster.
 This is intended to be used by/with [Solar Tweaks](https://github.com/Solar-Tweaks/),
